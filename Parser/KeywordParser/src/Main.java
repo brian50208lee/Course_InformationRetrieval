@@ -8,6 +8,8 @@ import java.util.HashSet;
 
 import org.ansj.splitWord.analysis.ToAnalysis;
 
+import com.sun.media.sound.WaveFileWriter;
+
 
 public class Main {
 	static final String intputDocFolder = "./Documents/";
@@ -17,7 +19,7 @@ public class Main {
 	
 	
 	public static void main(String[] args) throws IOException {
-		parseDoc();
+		//parseDoc();
 		parseQuery();
 
 	}
@@ -45,6 +47,7 @@ public class Main {
 	}
 	
 	public static void parseQuery() throws IOException{
+		
 		File folder = new File(intputQryFolder);
 		for (String fileName : folder.list()) {
 			File file = new File(intputQryFolder + fileName);
@@ -57,8 +60,9 @@ public class Main {
 			}
 			br.close();
 			
-
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputQryFolder + fileName)));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputQryFolder + "queries.txt")));
+			
+			StringBuilder sb = new StringBuilder("");
 			String contentResult[] = ToAnalysis.parse(content).toString().split(",");
 			HashSet<String> set = new HashSet<String>();
 			for (String word : contentResult) {
@@ -68,7 +72,11 @@ public class Main {
 				}
 			}
 			bw.close();
+			
 		}
+		
+		
+		
 	}
 
 }

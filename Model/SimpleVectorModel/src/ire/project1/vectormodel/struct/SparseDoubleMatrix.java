@@ -2,6 +2,7 @@ package ire.project1.vectormodel.struct;
 
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class SparseDoubleMatrix {
@@ -19,6 +20,7 @@ public class SparseDoubleMatrix {
 	public double get(int i, int j ){
 		return matrix.get(i)==null? 0.0 : matrix.get(i).get(j);
 	}
+	public Set<Integer> indexSet(){return this.matrix.keySet();}
 	
 	/* constructor */
 	public SparseDoubleMatrix() {

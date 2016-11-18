@@ -1,8 +1,10 @@
 package ire.project1.vectormodel.struct;
 import java.util.HashMap;
+import java.util.Set;
 
 public class DocumentTermMatrix {
 	private SparseDoubleMatrix docTermMatrix;
+	private SparseDoubleMatrix termDocMatrix;
 	
 	
 	private int rowLength = 0;
@@ -13,16 +15,17 @@ public class DocumentTermMatrix {
 	private HashMap<Integer, String> idxDocMap;
 	private HashMap<Integer, String> idxTerMap;
 	
-	public int getRowLength(){return this.rowLength;}
-	public int getColLength(){return this.colLength;}
-	public int getTerm(String term){return this.terIdxMap.get(term);}
-	public int getDoc(String doc){return this.docIdxMap.get(doc);}
+	public Integer getRowLength(){return this.rowLength;}
+	public Integer getColLength(){return this.colLength;}
+	public Integer getTerm(String term){return this.terIdxMap.get(term);}
+	public Integer getDoc(String doc){return this.docIdxMap.get(doc);}
 	public String getTerm(int term){return this.idxTerMap.get(term);}
 	public String getDoc(int doc){return this.idxDocMap.get(doc);}
-	
+	public Set<Integer> indexSet(){return this.docTermMatrix.indexSet();}
 	
 	public DocumentTermMatrix() {
 		this.docTermMatrix = new SparseDoubleMatrix();
+		this.termDocMatrix = new SparseDoubleMatrix();
 
 		this.docIdxMap = new HashMap<String,Integer>();
 		this.terIdxMap = new HashMap<String,Integer>();
@@ -45,8 +48,9 @@ public class DocumentTermMatrix {
 		
 		int docIdx = docIdxMap.get(doc);
 		int termIdx = terIdxMap.get(term);
-		
+
 		docTermMatrix.add(docIdx, termIdx, 1);
+		termDocMatrix.add(termIdx, docIdx, 1);
 	}
 	
 	public double getValue(int i, int j) {
@@ -68,8 +72,9 @@ public class DocumentTermMatrix {
 		if (j >= colLength || j < 0 ) {
 			throw new RuntimeException("colum index out of bound:"+j);
 		} 
-		
+
 		docTermMatrix.set(i, j, value);
+		termDocMatrix.set(j, i, value);
 	}
 	
 	public String getTermList(){
@@ -88,6 +93,19 @@ public class DocumentTermMatrix {
 			if(i == rowLength-1)sb.append("]");
 		}
 		return sb.toString();
+	}
+	
+	public SparseDoubleArray getDocmentVector(int index){
+		if (index >= rowLength || index < 0 ) {
+			throw new RuntimeException("row index out of bound:"+index);
+		} 
+		return this.docTermMatrix.getRow(index);
+	}
+	public SparseDoubleArray getTermVector(int index){
+		if (index >= colLength || index < 0 ) {
+			throw new RuntimeException("row index out of bound:"+index);
+		} 
+		return this.termDocMatrix.getRow(index);
 	}
 
 }
