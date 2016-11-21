@@ -3,7 +3,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import com.sun.xml.internal.fastinfoset.util.ValueArrayResourceException;
 
 import ire.project1.vectormodel.struct.DocumentTermMatrix;
 import ire.project1.vectormodel.struct.SparseDoubleArray;

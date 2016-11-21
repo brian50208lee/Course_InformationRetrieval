@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -15,14 +14,14 @@ import ire.project1.vectormodel.struct.DocumentTermMatrix;
 import ire.project1.vectormodel.struct.SparseDoubleArray;
 
 public class Demo {
-	static String docsPath = "/Users/selab/git/Course_InformationRetrieval/ParsedData/Keywords_doc/";
-	static String qrysPath = "/Users/selab/git/Course_InformationRetrieval/ParsedData/Keywords_qry/";
-	static String resultPath = "/Users/selab/Desktop/result.csv";
+	private static final String DOCS_PATH = "C:/Users/Owner/git/Course_InformationRetrieval/ParsedData2/document_collection_1029update.txt";
+	private static final String QRYS_PATH = "C:/Users/Owner/git/Course_InformationRetrieval/ParsedData2/queries.txt/";
+	private static final String RESULT_PATH = "C:/Users/Owner/Desktop/result.csv";
 	
-	static DocumentTermMatrix documentTermMatrix;
-	static VectorModel model;
-	static ArrayList<String[]> queryList;
-	static StringBuilder sb;
+	private static DocumentTermMatrix documentTermMatrix;
+	private static VectorModel model;
+	private static ArrayList<String[]> queryList;
+	private static StringBuilder csvResult;
 	
 	public static void main(String[] args) throws IOException {
 		/* create docmentTermMatrix */
@@ -32,27 +31,18 @@ public class Demo {
 		
 		/* create model */
 		model = new VectorModel(documentTermMatrix);
-		model.tfidf();
 		
 		/* create queries */
 		createQuery();
-		
-		/* sort query by id */
-		queryList.sort(new Comparator<Object[]>() {
-			@Override
-			public int compare(Object[] o1, Object[] o2) {
-				return Integer.compare(Integer.parseInt((String)o1[0]), Integer.parseInt((String)o2[0]));
-			}
-		});
 		
 		/* ranking and store result */
 		ranking();
 		
 		/* output */
-		BufferedWriter br = new BufferedWriter(new FileWriter(resultPath));
-		br.write(sb.toString());
-		System.out.println(sb.toString());
-		br.close();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(RESULT_PATH));
+		bw.write(csvResult.toString());
+		bw.close();
+		System.out.println(csvResult.toString());
 		
 		
 	}
@@ -60,48 +50,46 @@ public class Demo {
 	
 	public static void createDocTermMatrix() throws IOException{
 		documentTermMatrix = new DocumentTermMatrix();
-		File docCollection = new File(docsPath);
-		for (String fileName : docCollection.list()) {
-			File doc = new File(docsPath + fileName);
-			if (doc.isHidden())continue;
+		BufferedReader br = new BufferedReader(new FileReader(new File(DOCS_PATH)));
+		for (String line=br.readLine(); line!=null; line=br.readLine()) {
+			/* each doc */
+			System.out.println("read document id: " + documentTermMatrix.getRowLength());
 			
-			BufferedReader br = new BufferedReader(new FileReader(doc));
-			for(String line = br.readLine(); line != null; line = br.readLine()){
-				if (line.length()>0) {
-					documentTermMatrix.addElement(fileName, line);
+			String doc[] = line.split("\t");
+			String id = doc[0];
+			String keywords[] = doc[1].split(" ");
+			
+			for (String word : keywords) {
+				if (word.length()>0) {
+					documentTermMatrix.addElement(id, word);
 				}
 			}
-			br.close();	
 		}
+		br.close();
 	}
 	
 	public static void createQuery() throws IOException{
 		queryList = new ArrayList<String[]>();
-		
-		File qryCollection = new File(qrysPath);
-		for (String fileName : qryCollection.list()) {
-			File qry = new File(qrysPath + fileName);
-			if (qry.isHidden())continue;
+		BufferedReader br = new BufferedReader(new FileReader(new File(QRYS_PATH)));
+		for (String line=br.readLine(); line!=null; line=br.readLine()) {
+			/* each query */
+			String qry[] = line.split("\t");
+			String num = qry[0];
+			String keywords = qry[1];
 			
-			String id = fileName.split("\\.")[0];
-			String keywords = "";
-			
-			BufferedReader br = new BufferedReader(new FileReader(qry));
-			for(String line = br.readLine(); line != null; line = br.readLine()){
-				keywords += line + " ";
-			}
-			queryList.add(new String[]{id, keywords});
+			queryList.add(new String[]{num, keywords});
 		}
+		br.close();
 	}
 	
 	public static void ranking(){
-		sb = new StringBuilder("Id,Rel_News\n");
+		csvResult = new StringBuilder("Id,Rel_News\n");
 		
-		for (String q[] : queryList) {
+		for (String qry[] : queryList) {
 			/* create queryVector */
 			SparseDoubleArray queryVector = new SparseDoubleArray();
-			String id = q[0];
-			String keywords[] = q[1].split(" ");
+			String num = qry[0];
+			String keywords[] = qry[1].split(" ");
 			for (String keyword : keywords) {
 				if (keyword.length()>0) {
 					if (documentTermMatrix.getTerm(keyword) == null)continue;
@@ -110,17 +98,19 @@ public class Demo {
 			}
 			
 			/* search model */
-			System.out.println("query id: " + id);
-			sb.append(id + ",");
-			LinkedList<Object[]> result = model.Search(queryVector, 100);
-			Iterator<Object[]> iterator = result.iterator();
-			while(iterator.hasNext()){
-				String docName = ((String)iterator.next()[0]).split("\\.")[0];
-				sb.append(docName);
+			System.out.println("search query num: " + num);
+			csvResult.append(num + ",");
+			LinkedList<Object[]> rankingList = model.Search(queryVector, 100);
+			
+			/* append ranking to result string */
+			Iterator<Object[]> ranking = rankingList.iterator();
+			while(ranking.hasNext()){
+				String docID = ((String)ranking.next()[0]).split("\\.")[0];
+				csvResult.append(docID);
 				
 				/* csv padding */
-				if (iterator.hasNext())sb.append(" ");
-				else sb.append("\n");
+				if (ranking.hasNext())csvResult.append(" ");
+				else csvResult.append("\n");
 			}
 		}
 	}

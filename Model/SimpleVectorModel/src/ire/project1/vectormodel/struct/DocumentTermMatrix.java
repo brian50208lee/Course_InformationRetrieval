@@ -107,5 +107,9 @@ public class DocumentTermMatrix {
 		} 
 		return this.termDocMatrix.getRow(index);
 	}
+	
+	public void printMatrix(){
+		System.out.println(this.docTermMatrix.toString());
+	}
 
 }

@@ -8,75 +8,72 @@ import java.util.HashSet;
 
 import org.ansj.splitWord.analysis.ToAnalysis;
 
-import com.sun.media.sound.WaveFileWriter;
 
 
 public class Main {
-	static final String intputDocFolder = "./Documents/";
-	static final String intputQryFolder = "./Queries/";
-	static final String outputDocFolder = "./Keywords_doc/";
-	static final String outputQryFolder = "./Keywords_qry/";
+
+	static final String intputFolder = "./Data/";
+	static final String outputFolder = "./Result/";
 	
 	
 	public static void main(String[] args) throws IOException {
-		//parseDoc();
 		parseQuery();
-
+		parseDoc();
 	}
 	
 	public static void parseDoc() throws IOException{
-		File folder = new File(intputDocFolder);
-		for (String fileName : folder.list()) {
-			File file = new File(intputDocFolder + fileName);
-			if (file.isHidden())continue;
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String title = br.readLine();
-			String content = br.readLine();
-			br.close();
-			
+		BufferedReader br = new BufferedReader(new FileReader(new File(intputFolder + "document_collection_1029update.txt")));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputFolder + "document_collection_1029update.txt")));
 
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputDocFolder + fileName)));
-			String contentResult[] = ToAnalysis.parse(title + content).toString().split(",");
+		for (String line = br.readLine(); line != null; line = br.readLine()) {
+			/* eash doc */
+			String qeury[] = line.split("\t");
+			String id = qeury[0];
+			String title = qeury[1];
+			String content = qeury[2];
+			String keyContent = String.format("%s %s", title, content);
+			
+			String contentResult[] = ToAnalysis.parse(keyContent).toString().split(",");
+			
+			bw.write(id + "\t");
 			for (String word : contentResult) {
-				if (word.contains("n") && !word.contains("en")) {
-					bw.write(word.split("/")[0] + "\n");
+				if ((word.contains("n")) && !word.contains("en") ) {
+					bw.write(word.split("/")[0] + " ");
 				}
 			}
-			bw.close();
+			bw.write("\n");
 		}
+		br.close();
+		bw.close();
 	}
 	
 	public static void parseQuery() throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(new File(intputFolder + "queries.txt")));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputFolder + "queries.txt")));
 		
-		File folder = new File(intputQryFolder);
-		for (String fileName : folder.list()) {
-			File file = new File(intputQryFolder + fileName);
-			if (file.isHidden())continue;
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String content = "";
-			String line = "";
-			while((line = br.readLine()) != null){
-				content += line;
-			}
-			br.close();
+		for (String line = br.readLine(); line != null; line = br.readLine()) {
+			/* eash query */
+			String qeury[] = line.split("\t");
+			String id = qeury[0];
+			String title = qeury[1];
+			String desc = qeury[2];
+			String conc = qeury[3];
+			String keyContent = title + " " + desc + " " + conc;
 			
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outputQryFolder + "queries.txt")));
+			String contentResult[] = ToAnalysis.parse(keyContent).toString().split(",");
+			HashSet<String> keywordsSet = new HashSet<String>();
 			
-			StringBuilder sb = new StringBuilder("");
-			String contentResult[] = ToAnalysis.parse(content).toString().split(",");
-			HashSet<String> set = new HashSet<String>();
+			bw.write(id + "\t");
 			for (String word : contentResult) {
-				if (word.contains("n") && !word.contains("en") &&!set.contains(word.split("/")[0])) {
-					set.add(word.split("/")[0]);
-					bw.write(word.split("/")[0] + "\n");
+				if ((word.contains("n")) && !word.contains("en") && !keywordsSet.contains(word.split("/")[0])) {
+					keywordsSet.add(word.split("/")[0]);
+					bw.write(word.split("/")[0] + " ");
 				}
 			}
-			bw.close();
-			
+			bw.write("\n");
 		}
-		
-		
-		
+		br.close();
+		bw.close();
 	}
 
 }
