@@ -15,7 +15,7 @@ public class Main {
 	static ZHConverter converter = ZHConverter.getInstance(ZHConverter.SIMPLIFIED);
 	public static void main(String[] args) throws IOException {
 		convertQuery();
-		convertDocument();
+		//convertDocument();
 	}
 	
 	

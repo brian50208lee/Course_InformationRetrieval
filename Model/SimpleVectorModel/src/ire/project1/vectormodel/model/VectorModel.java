@@ -37,6 +37,7 @@ public class VectorModel {
 		}
 	}
 	
+	/** @return Object[]{String docName, Double rankingScore}*/
 	public LinkedList<Object[]> Search(SparseDoubleArray queryVector, int retrivalDocNumber){
 		LinkedList<Object[]> mostRelevantDoc = new LinkedList<Object[]>();
 		Comparator<Object[]> rankingComparator = new Comparator<Object[]>() {
@@ -67,6 +68,7 @@ public class VectorModel {
 		}
 		
 		mostRelevantDoc.sort(rankingComparator);
+		System.out.println("result length: " + mostRelevantDoc.size());
 		return mostRelevantDoc;
 	}
 	

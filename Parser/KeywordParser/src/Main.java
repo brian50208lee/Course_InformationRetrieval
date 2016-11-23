@@ -18,7 +18,7 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		parseQuery();
-		parseDoc();
+		//parseDoc();
 	}
 	
 	public static void parseDoc() throws IOException{

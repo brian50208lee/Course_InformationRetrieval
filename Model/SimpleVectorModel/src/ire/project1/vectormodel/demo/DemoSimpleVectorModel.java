@@ -13,15 +13,20 @@ import ire.project1.vectormodel.model.VectorModel;
 import ire.project1.vectormodel.struct.DocumentTermMatrix;
 import ire.project1.vectormodel.struct.SparseDoubleArray;
 
-public class Demo {
-	private static final String DOCS_PATH = "C:/Users/Owner/git/Course_InformationRetrieval/ParsedData2/document_collection_1029update.txt";
-	private static final String QRYS_PATH = "C:/Users/Owner/git/Course_InformationRetrieval/ParsedData2/queries.txt/";
-	private static final String RESULT_PATH = "C:/Users/Owner/Desktop/result.csv";
+public class DemoSimpleVectorModel {
+	private static final String DOCS_PATH = "/Users/selab/git/Course_InformationRetrieval/ParsedData/document_collection_1029update.txt";
+	private static final String QRYS_PATH = "/Users/selab/git/Course_InformationRetrieval/ParsedData/queries.txt/";
+	private static final String RESULT_PATH = "/Users/selab/Desktop/result.csv";
+	private static final int RELEVANT_DOC_NUM = 100;
+	
+	private static final String RELEVANT_RESULT_PATH = "/Users/selab/Desktop/relevantQry.txt";
+	
 	
 	private static DocumentTermMatrix documentTermMatrix;
 	private static VectorModel model;
 	private static ArrayList<String[]> queryList;
 	private static StringBuilder csvResult;
+	private static StringBuilder relevantDoc;
 	
 	public static void main(String[] args) throws IOException {
 		/* create docmentTermMatrix */
@@ -38,11 +43,16 @@ public class Demo {
 		/* ranking and store result */
 		ranking();
 		
-		/* output */
+		/* output top relevant to csv */
 		BufferedWriter bw = new BufferedWriter(new FileWriter(RESULT_PATH));
 		bw.write(csvResult.toString());
 		bw.close();
-		System.out.println(csvResult.toString());
+		//System.out.println(csvResult.toString());
+
+		/* output top relevant to queries */
+		bw = new BufferedWriter(new FileWriter(RELEVANT_RESULT_PATH));
+		bw.write(relevantDoc.toString());
+		bw.close();
 		
 		
 	}
@@ -84,6 +94,7 @@ public class Demo {
 	
 	public static void ranking(){
 		csvResult = new StringBuilder("Id,Rel_News\n");
+		relevantDoc = new StringBuilder("");
 		
 		for (String qry[] : queryList) {
 			/* create queryVector */
@@ -100,7 +111,7 @@ public class Demo {
 			/* search model */
 			System.out.println("search query num: " + num);
 			csvResult.append(num + ",");
-			LinkedList<Object[]> rankingList = model.Search(queryVector, 100);
+			LinkedList<Object[]> rankingList = model.Search(queryVector, RELEVANT_DOC_NUM);
 			
 			/* append ranking to result string */
 			Iterator<Object[]> ranking = rankingList.iterator();
@@ -111,6 +122,19 @@ public class Demo {
 				/* csv padding */
 				if (ranking.hasNext())csvResult.append(" ");
 				else csvResult.append("\n");
+			}
+			
+			/* relevant document */
+			relevantDoc.append(qry[0] + "\t");
+			relevantDoc.append(qry[1] + "\t");
+			ranking = rankingList.iterator();
+			while(ranking.hasNext()){
+				String docID = ((String)ranking.next()[0]).split("\\.")[0];
+				relevantDoc.append(docID);
+				
+				/* padding */
+				if (ranking.hasNext())relevantDoc.append(" ");
+				else relevantDoc.append("\n");
 			}
 		}
 	}
