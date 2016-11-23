@@ -14,14 +14,26 @@ public class VectorModel {
 		this.documentTermMatrix = documentTermMatrix;
 	}
 	
-	public void tfidf(){
+	/** build model */
+	public void build(){
+		//tfidf();
+	}
+	
+	
+	/** TF-IDF */
+	private void tfidf(){
+		/*
+		 * tf = 1 + log(f)
+		 * idf = log(1 + N/ni) 
+		 */
+		
 		System.out.println("tf-idf");
+		/* cal new value */
 		HashMap<String, Double> newValueSet = new HashMap<String, Double>();
 		for (int i : documentTermMatrix.indexSet()) {
 			SparseDoubleArray docVector = documentTermMatrix.getDocmentVector(i);
 			for (int j : docVector.indexSet()) {
 				System.out.println(i+","+j);
-				SparseDoubleArray termVector = documentTermMatrix.getTermVector(j);
 				double tf = 1 + Math.log(documentTermMatrix.getValue(i, j));
 				double idf = Math.log(1+documentTermMatrix.getRowLength()/documentTermMatrix.getTermVector(j).non0());
 				
@@ -29,6 +41,7 @@ public class VectorModel {
 			}
 		}
 		
+		/* set new value to matrix */
 		for (String string : newValueSet.keySet()) {
 			int i = Integer.parseInt(string.split("\\,")[0]);
 			int j = Integer.parseInt(string.split("\\,")[1]);

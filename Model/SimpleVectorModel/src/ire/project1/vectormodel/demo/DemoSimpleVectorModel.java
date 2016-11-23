@@ -17,16 +17,12 @@ public class DemoSimpleVectorModel {
 	private static final String DOCS_PATH = "/Users/selab/git/Course_InformationRetrieval/ParsedData/document_collection_1029update.txt";
 	private static final String QRYS_PATH = "/Users/selab/git/Course_InformationRetrieval/ParsedData/queries.txt/";
 	private static final String RESULT_PATH = "/Users/selab/Desktop/result.csv";
-	private static final int RELEVANT_DOC_NUM = 100;
-	
-	private static final String RELEVANT_RESULT_PATH = "/Users/selab/Desktop/relevantQry.txt";
-	
+	private static final int RELEVANT_DOC_NUM = 100;	
 	
 	private static DocumentTermMatrix documentTermMatrix;
 	private static VectorModel model;
 	private static ArrayList<String[]> queryList;
 	private static StringBuilder csvResult;
-	private static StringBuilder relevantDoc;
 	
 	public static void main(String[] args) throws IOException {
 		/* create docmentTermMatrix */
@@ -36,6 +32,7 @@ public class DemoSimpleVectorModel {
 		
 		/* create model */
 		model = new VectorModel(documentTermMatrix);
+		model.build();
 		
 		/* create queries */
 		createQuery();
@@ -48,12 +45,6 @@ public class DemoSimpleVectorModel {
 		bw.write(csvResult.toString());
 		bw.close();
 		//System.out.println(csvResult.toString());
-
-		/* output top relevant to queries */
-		bw = new BufferedWriter(new FileWriter(RELEVANT_RESULT_PATH));
-		bw.write(relevantDoc.toString());
-		bw.close();
-		
 		
 	}
 	
@@ -63,8 +54,7 @@ public class DemoSimpleVectorModel {
 		BufferedReader br = new BufferedReader(new FileReader(new File(DOCS_PATH)));
 		for (String line=br.readLine(); line!=null; line=br.readLine()) {
 			/* each doc */
-			System.out.println("read document id: " + documentTermMatrix.getRowLength());
-			
+			System.out.println("read document num: " + documentTermMatrix.getRowLength());
 			String doc[] = line.split("\t");
 			String id = doc[0];
 			String keywords[] = doc[1].split(" ");
@@ -94,8 +84,6 @@ public class DemoSimpleVectorModel {
 	
 	public static void ranking(){
 		csvResult = new StringBuilder("Id,Rel_News\n");
-		relevantDoc = new StringBuilder("");
-		
 		for (String qry[] : queryList) {
 			/* create queryVector */
 			SparseDoubleArray queryVector = new SparseDoubleArray();
@@ -122,19 +110,6 @@ public class DemoSimpleVectorModel {
 				/* csv padding */
 				if (ranking.hasNext())csvResult.append(" ");
 				else csvResult.append("\n");
-			}
-			
-			/* relevant document */
-			relevantDoc.append(qry[0] + "\t");
-			relevantDoc.append(qry[1] + "\t");
-			ranking = rankingList.iterator();
-			while(ranking.hasNext()){
-				String docID = ((String)ranking.next()[0]).split("\\.")[0];
-				relevantDoc.append(docID);
-				
-				/* padding */
-				if (ranking.hasNext())relevantDoc.append(" ");
-				else relevantDoc.append("\n");
 			}
 		}
 	}

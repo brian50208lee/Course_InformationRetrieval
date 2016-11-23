@@ -6,7 +6,6 @@ public class DocumentTermMatrix {
 	private SparseDoubleMatrix docTermMatrix;
 	private SparseDoubleMatrix termDocMatrix;
 	
-	
 	private int rowLength = 0;
 	private int colLength = 0;
 
