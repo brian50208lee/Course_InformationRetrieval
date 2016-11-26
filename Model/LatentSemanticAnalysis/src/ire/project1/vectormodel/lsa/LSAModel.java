@@ -6,15 +6,15 @@ import java.util.LinkedList;
 
 public class LSAModel {
 	private double[][] docTermMatrix;
-	private int dimToReduce = 0;
-	public LSAModel(double[][] docTermMatrix,int dimToReduce) {
+	private int topicNumber = 0;
+	public LSAModel(double[][] docTermMatrix,int topicNumber) {
 		this.docTermMatrix = docTermMatrix;
-		this.dimToReduce = dimToReduce;
+		this.topicNumber = topicNumber;
 	}
 	
 	public void training(){
 		this.docTermMatrix = TFIDF.transform(docTermMatrix);
-		this.docTermMatrix = SVD.transform(docTermMatrix, dimToReduce);
+		this.docTermMatrix = SVD.transform(docTermMatrix, topicNumber);
 		System.out.println("done training");
 	}
 	

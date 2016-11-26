@@ -19,7 +19,7 @@ public class DemoLSA {
 	private static final String DOCS_PATH = "/Users/selab/git/Course_InformationRetrieval/ParsedData2/document_collection_1029update.txt";
 	private static final String QRYS_PATH = "/Users/selab/git/Course_InformationRetrieval/ParsedData2/5000relevantQry.txt/";
 	private static final String RESULT_PATH = "/Users/selab/Desktop/result.csv";
-	private static final int RELEVANT_DOC_NUM = 1000;
+	private static final int RELEVANT_DOC_NUM = 500;
 	private static final int RESULT_DOC_NUM = 100;
 
 	private static BidirectionalIndexMap docMap;
@@ -46,7 +46,7 @@ public class DemoLSA {
 			System.out.println("term number: " + trmMap.size());
 
 			/* create model */
-			model = new LSAModel(documentTermMatrix, 500);
+			model = new LSAModel(documentTermMatrix, 100);
 			model.training();
 
 			/* ranking and store result */
