@@ -1,4 +1,4 @@
-ParsedData/
-ParsedData2/
-RawData/
-Tool/
+*.zip
+*.rar
+Data/*
+Tool/*
