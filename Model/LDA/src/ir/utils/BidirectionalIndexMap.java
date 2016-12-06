@@ -1,4 +1,4 @@
-package ire.project1.topicmodel.struct;
+package ir.utils;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -13,12 +13,13 @@ public class BidirectionalIndexMap {
 		indexMap = new HashMap<Integer, String>();
 	}
 	
-	public void tryAppend(String str){
+	public int tryAppend(String str){
 		if (stringMap.get(str) == null) {
 			int nextIndex = stringMap.size();
 			stringMap.put(str, nextIndex);
 			indexMap.put(nextIndex, str);
 		}
+		return getIndex(str);
 	}
 	
 	public int size(){
