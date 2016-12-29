@@ -1,0 +1,2 @@
+Both terms are multinomials with Dirichlet priors
+Because the Dirichlet distribution is conjugate to the multinomial distribution
