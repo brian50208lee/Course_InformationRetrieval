@@ -12,7 +12,7 @@ public class RelationClassifier implements Serializable{
 	private HashMap<String, PatternWord> patternsCounter = null;
 	private ArrayList<PatternWord> topRelatedPattern = null;
 	private boolean topRelatedPattern_upToDate = false;
-	private int topNumber = 50;
+	private int topNumber = 150;
 	public RelationClassifier(String className){
 		this.className = className;
 		this.patternsCounter = new HashMap<String, PatternWord>();

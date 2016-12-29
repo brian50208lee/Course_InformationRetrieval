@@ -85,7 +85,7 @@ public class DemoRelationExtractor {
 			// second test if unknown
 			if (maxRelation.equals("unknown")) {
 				for(String sentence : referenceSentence){
-					if (sentence.contains(entity1) || sentence.contains(entity2)) { //score by sigle word appear
+					if (sentence.contains(entity1) || sentence.contains(entity2)) { // score by sigle word appear
 						List<String> patternList = Parser.parseToKeyword(sentence);
 						for (String pattern : patternList) {
 							for (String className : classifierMap.keySet()) {

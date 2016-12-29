@@ -10,7 +10,8 @@ public class Parser {
 	private static final List<String> stopWord = Arrays.asList(new String[]
 			{		"","，","。","、","在","的","和","了","与","为",
 					"是","后","被","有","他","之","而","也","并","她",	
-					"由","及","曾","得","以"		});
+					"由","及","曾","得","以","人","會","但","着","0",
+					"1","2","3","4","5","6","7","8","9","10",});
 	
 	
 	public static List<String> parseToKeyword(String sentence){
@@ -24,6 +25,7 @@ public class Parser {
 		}
 		return result;
 	}
+	
 	public static boolean isStopWordSymbol(String word){
 		word = word.replaceAll("\\s+", "");
 		return stopWord.contains(word);
