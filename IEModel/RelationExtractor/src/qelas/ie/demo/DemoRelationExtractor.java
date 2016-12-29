@@ -82,10 +82,10 @@ public class DemoRelationExtractor {
 				}
 			}
 			
-			// second test
+			// second test if unknown
 			if (maxRelation.equals("unknown")) {
 				for(String sentence : referenceSentence){
-					if (sentence.contains(entity1) || sentence.contains(entity2)) {
+					if (sentence.contains(entity1) || sentence.contains(entity2)) { //score by sigle word appear
 						List<String> patternList = Parser.parseToKeyword(sentence);
 						for (String pattern : patternList) {
 							for (String className : classifierMap.keySet()) {
@@ -107,9 +107,10 @@ public class DemoRelationExtractor {
 			// final test
 			if (maxRelation.equals("unknown")) maxRelation = "birthPlace";
 
+			// add output
 			resultString.append(id + ",");
 			resultString.append(maxRelation + "\n");
-			System.out.printf("%d\t%20s%20s%20s\t%d\n",id, entity1, entity2, maxRelation, maxRelationScore);
+			System.out.printf("%-8d%-20s%-20s%-15s%-5d\n",id, entity1, entity2, maxRelation, maxRelationScore);
 			
 			
 
